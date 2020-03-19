@@ -16,15 +16,15 @@ using AspNetCoreTodo.Services;
 
 namespace AspNetCoreTodo.Controllers
 {
-    [Route("login")]
-    public class LoginController : Controller
+    [Route("register")]
+    public class RegisterController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
-        public LoginController(
+        public RegisterController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
@@ -37,19 +37,20 @@ namespace AspNetCoreTodo.Controllers
         }
 
         [HttpPost]
-        // public async IActionResult Authenticate([FromBody]Login model)
-        public async Task<IActionResult> Login([FromBody]Login model)
+        // public async IActionResult Authenticate([FromBody]Register model)
+        public async Task<IActionResult> Register([FromBody]Register model)
         {
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                return Json("login success");
+                return Json("register success");
             } 
             else 
             {
-                return Json("login failed");
+                return Json("register failed");
             }
         }
     }
